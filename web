@@ -515,31 +515,49 @@ if game.PlaceId ~= 16732694052 then
     return
 end
 
--- Cek apakah musim "Autumn" sedang aktif
+-- Cek apakah folder season ada dan ambil musim saat ini
 local SeasonExists = ReplicatedStorage:FindFirstChild("world") 
     and ReplicatedStorage.world:FindFirstChild("season")
 
 local CurrentSeason = SeasonExists and ReplicatedStorage.world.season.Value or "Unknown"
 
-if CurrentSeason ~= "Autumn" then return end -- Hanya kirim jika musim adalah Autumn
+-- Jika season tidak ditemukan, jangan kirim webhook
+if CurrentSeason == "Unknown" then return end 
 
--- Data untuk webhook
-local PlayersCount = #Players:GetPlayers()
-local SeasonMessage = "🍂 **Autumn Season is Active!**"
+-- Warna dan emoji sesuai dengan musim
+local SeasonColors = {
+    ["Spring"] = 0x00FF00, -- Hijau
+    ["Summer"] = 0xFFFF00, -- Kuning
+    ["Autumn"] = 0xFFA500, -- Orange
+    ["Winter"] = 0xADD8E6  -- Biru Muda
+}
+
+local SeasonEmojis = {
+    ["Spring"] = "🌸",
+    ["Summer"] = "☀️",
+    ["Autumn"] = "🍂",
+    ["Winter"] = "❄️"
+}
+
+local SeasonColor = SeasonColors[CurrentSeason] or 0xFFFFFF -- Default putih jika tidak ada
+local SeasonEmoji = SeasonEmojis[CurrentSeason] or "📅"
+
+-- Format pesan dengan ```code block```
+local SeasonMessage = '```' .. SeasonEmoji .. " " .. CurrentSeason .. " Season is Active!```"
 local JoinServer = 'game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, \'' .. tostring(game.JobId) .. '\')'
 
-local WebhookURL = "https://discord.com/api/webhooks/1353985665997738005/vRlJRVyGMwpxbwiK77ywmWSwJ4oPVAxCbK1Du71rJqB4-CPsz2Qu77U7hYEDny3lTCly"
+local WebhookURL = "hhttps://discord.com/api/webhooks/1353995124392329310/ouvzZDtejkGX52F_ATdH3Xzp2nZbwfp6BYaOLa4DxXQoiKppCJugrZ8a5kuXTHRELvGb"
 
 local WebhookData = {
-    ["username"] = "Sky Finder || ThanHub",
+    ["username"] = "Season Finder || ThanHub",
     ["avatar_url"] = "https://media.discordapp.net/attachments/1342846567094161488/1346724283753304084/Gambar_WhatsApp_2025-02-18_pukul_06.35.37_182c3226.jpg",
     ["embeds"] = {{
         ["title"] = "**ThanHub (Fisch Webhook)**",
-        ["color"] = tonumber(0x0000FF), -- Warna orange untuk Autumn
+        ["color"] = tonumber(SeasonColor),
         ["fields"] = {
             {
                 ["name"] = "👋 Players In Server :",
-                ["value"] = "```" .. PlayersCount .. "/15```",
+                ["value"] = "```" .. #Players:GetPlayers() .. "/15```",
                 ["inline"] = true
             },
             {
@@ -549,7 +567,7 @@ local WebhookData = {
             },
             {
                 ["name"] = "📌 Information:",
-                ["value"] = "```Season : 🍂 Autumn```",
+                ["value"] = SeasonMessage,
                 ["inline"] = false
             },
             {
@@ -560,7 +578,7 @@ local WebhookData = {
                     {
                         ["name"] = "[📁] Join Server",
                         ["value"] = '```' .. JoinServer .. '```',
-                    },
+                    }
         },
         ["footer"] = {
             ["text"] = "Webhook Created By ThanHub",
