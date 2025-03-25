@@ -466,7 +466,7 @@ local WebhookData = {
         ["fields"] = {
             {
                 ["name"] = "👋 Players In Server :",
-                ["value"] = "```**" .. PlayersCount .. "/15**```",
+                ["value"] = "```" .. PlayersCount .. "/15```",
                 ["inline"] = true
             },
             {
@@ -539,7 +539,7 @@ local WebhookData = {
         ["fields"] = {
             {
                 ["name"] = "👋 Players In Server :",
-                ["value"] = "```**" .. PlayersCount .. "/15**```",
+                ["value"] = "```" .. PlayersCount .. "/15```",
                 ["inline"] = true
             },
             {
