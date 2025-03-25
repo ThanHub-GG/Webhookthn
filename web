@@ -476,7 +476,7 @@ local WebhookData = {
             },
             {
                 ["name"] = "📌 Information:",
-                ["value"] = "```🌀 **Aurora Borealis**```",
+                ["value"] = "```Season : 🌀 Aurora Borealis```",
                 ["inline"] = false
             },
             {
@@ -535,7 +535,7 @@ local WebhookData = {
     ["avatar_url"] = "https://media.discordapp.net/attachments/1342846567094161488/1346724283753304084/Gambar_WhatsApp_2025-02-18_pukul_06.35.37_182c3226.jpg",
     ["embeds"] = {{
         ["title"] = "**ThanHub (Fisch Webhook)**",
-        ["color"] = tonumber(0xFFA500), -- Warna orange untuk Autumn
+        ["color"] = tonumber(0x0000FF), -- Warna orange untuk Autumn
         ["fields"] = {
             {
                 ["name"] = "👋 Players In Server :",
@@ -549,7 +549,7 @@ local WebhookData = {
             },
             {
                 ["name"] = "📌 Information:",
-                ["value"] = "```🍂 **Autumn Season**```",
+                ["value"] = "```Season : 🍂 Autumn```",
                 ["inline"] = false
             },
             {
