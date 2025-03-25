@@ -476,7 +476,7 @@ local WebhookData = {
             },
             {
                 ["name"] = "📌 Information:",
-                ["value"] = "```Sky : 🌀 Aurora Borealis```",
+                ["value"] = "```🌌 Aurora Borealis```",
                 ["inline"] = false
             },
             {
