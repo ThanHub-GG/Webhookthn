@@ -546,7 +546,7 @@ local SeasonEmoji = SeasonEmojis[CurrentSeason] or "📅"
 local SeasonMessage = '```' .. SeasonEmoji .. " " .. CurrentSeason .. " Season is Active!```"
 local JoinServer = 'game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, \'' .. tostring(game.JobId) .. '\')'
 
-local WebhookURL = "hhttps://discord.com/api/webhooks/1353995124392329310/ouvzZDtejkGX52F_ATdH3Xzp2nZbwfp6BYaOLa4DxXQoiKppCJugrZ8a5kuXTHRELvGb"
+local WebhookURL = "https://discord.com/api/webhooks/1353995124392329310/ouvzZDtejkGX52F_ATdH3Xzp2nZbwfp6BYaOLa4DxXQoiKppCJugrZ8a5kuXTHRELvGb"
 
 local WebhookData = {
     ["username"] = "Season Finder || ThanHub",
