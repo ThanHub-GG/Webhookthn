@@ -266,7 +266,7 @@ end
                     },
                     {
                         ["name"] = "[👥] Total Players",
-                        ["value"] = '```' .. tostring(TotalPlayers) .. '```',
+                        ["value"] = '```' .. tostring(TotalPlayers) .. '/15```',
                         ["inline"] = true
                     },
                     {
