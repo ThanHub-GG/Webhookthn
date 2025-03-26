@@ -1,68 +1,69 @@
-local url = "https://discord.com/api/webhooks/1354541576646430890/6ORZLO1QklH4mk0jh6WelPc_FgGteM77GhA4qnYuGY04ykbWDUk2PH3LY-HfYJ5W1VwU"
-local messageId = _G.ExecutionMessageID -- Mengambil message ID sebelumnya dari global variable
+local HttpService = game:GetService("HttpService")
 
--- Jika belum ada, inisialisasi jumlah eksekusi
-_G.ExecutionCount = (_G.ExecutionCount or 0) + 1
+-- URL Firebase (Ganti dengan URL Database Firebase kamu)
+local firebaseUrl = "https://execution-b3f68-default-rtdb.firebaseio.com/executionCount.json"
 
--- Format data untuk dikirim (tanpa JSONEncode)
-local newdata = [[{
-    "content": "**Execution Update**",
-    "embeds": [{
-        "title": "Script Execution Tracker",
-        "description": "Total script executions:",
-        "color": 65280,
-        "fields": [{
-            "name": "🔄 Total Executions",
-            "value": "```]] .. tostring(_G.ExecutionCount) .. [[```",
-            "inline": true
-        }],
-        "footer": {
-            "text": "Execution Webhook | Made by ThanHub"
-        },
-        "timestamp": "]] .. os.date("!%Y-%m-%dT%H:%M:%SZ") .. [["
-    }]
-}]]
-local headers = { ["content-type"] = "application/json" }
-local request = http_request or request or HttpPost or syn.request
+-- URL Webhook Discord (Ganti dengan webhook kamu)
+local discordWebhookUrl = "https://discord.com/api/webhooks/1354541576646430890/6ORZLO1QklH4mk0jh6WelPc_FgGteM77GhA4qnYuGY04ykbWDUk2PH3LY-HfYJ5W1VwU"
 
-if request then
-    if messageId then
-        -- Edit pesan lama jika messageId tersedia
-        local editUrl = url .. "/messages/" .. messageId
-        local editResponse = request({
-            Url = editUrl,
-            Body = newdata,
-            Method = "PATCH",
-            Headers = headers
-        })
-        
-        if editResponse and editResponse.StatusCode == 200 then
-            print("✅ Execution webhook updated! Total:", _G.ExecutionCount)
-        else
-            print("❌ Failed to update execution webhook! Status:", editResponse and editResponse.StatusCode or "Unknown")
-        end
+-- Ambil data dari Firebase
+local function getExecutionCount()
+    local response = request({
+        Url = firebaseUrl,
+        Method = "GET"
+    })
+
+    if response and response.Body then
+        local data = tonumber(response.Body) or 0
+        return data
     else
-        -- Kirim pesan pertama kali dan simpan ID
-        local sendResponse = request({
-            Url = url,
-            Body = newdata,
-            Method = "POST",
-            Headers = headers
-        })
-        
-        if sendResponse and sendResponse.Body then
-            local responseData = game:GetService("HttpService"):JSONDecode(sendResponse.Body)
-            if responseData and responseData.id then
-                _G.ExecutionMessageID = responseData.id -- Simpan message ID untuk update berikutnya
-                print("✅ Execution webhook sent! Message ID:", _G.ExecutionMessageID)
-            end
-        else
-            print("❌ Failed to send execution webhook!")
-        end
+        warn("Gagal mengambil data dari Firebase!")
+        return 0
     end
-else
-    warn("❌ HTTP Request method not found! Webhook failed to send.")
 end
+
+-- Update execution count ke Firebase dan Discord
+local function updateExecutionCount()
+    local currentCount = getExecutionCount()
+    local newCount = currentCount + 1
+
+    -- Simpan ke Firebase
+    request({
+        Url = firebaseUrl,
+        Method = "PUT",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = tostring(newCount)
+    })
+
+    -- Kirim ke Discord Webhook
+    local messageData = {
+        ["username"] = "Execution Tracker",
+        ["avatar_url"] = "https://cdn-icons-png.flaticon.com/512/919/919825.png",
+        ["embeds"] = {
+            {
+                ["title"] = "Script Execution Tracker",
+                ["description"] = "**Total Executions:** `" .. tostring(newCount) .. "`",
+                ["color"] = tonumber(0x00FF00), -- Warna hijau
+                ["footer"] = { ["text"] = "Execution Webhook | Made by ThanHub" },
+                ["timestamp"] = DateTime.now():ToIsoDate()
+            }
+        }
+    }
+
+    local messageJson = HttpService:JSONEncode(messageData)
+
+    request({
+        Url = discordWebhookUrl,
+        Method = "POST",
+        Headers = { ["Content-Type"] = "application/json" },
+        Body = messageJson
+    })
+
+    print("Execution count diperbarui: " .. newCount)
+end
+
+-- Jalankan update execution
+updateExecutionCount()
 
 local id = game.PlaceId
 if id == 16732694052 then
