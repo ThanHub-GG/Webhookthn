@@ -1,14 +1,12 @@
 local url = "https://discord.com/api/webhooks/1354541576646430890/6ORZLO1QklH4mk0jh6WelPc_FgGteM77GhA4qnYuGY04ykbWDUk2PH3LY-HfYJ5W1VwU"
-local messageId = "1354547999904104530" -- Ganti dengan ID pesan Discord yang ingin diedit.
+local messageId = _G.ExecutionMessageID -- Mengambil message ID sebelumnya dari global variable
 
--- Simpan jumlah eksekusi dalam memori global
+-- Jika belum ada, inisialisasi jumlah eksekusi
 _G.ExecutionCount = (_G.ExecutionCount or 0) + 1
 
--- JSON string manual, tanpa JSONEncode
-local newdata = [[
-{
-    "username": "Execution Tracker",
-    "avatar_url": "https://cdn-icons-png.flaticon.com/512/919/919825.png",
+-- Format data untuk dikirim (tanpa JSONEncode)
+local newdata = [[{
+    "content": "**Execution Update**",
     "embeds": [{
         "title": "Script Execution Tracker",
         "description": "Total script executions:",
@@ -23,15 +21,12 @@ local newdata = [[
         },
         "timestamp": "]] .. os.date("!%Y-%m-%dT%H:%M:%SZ") .. [["
     }]
-}
-]]
-
--- Headers untuk request HTTP
+}]]
 local headers = { ["content-type"] = "application/json" }
 local request = http_request or request or HttpPost or syn.request
 
 if request then
-    if messageId ~= "1354547999904104530" then
+    if messageId then
         -- Edit pesan lama jika messageId tersedia
         local editUrl = url .. "/messages/" .. messageId
         local editResponse = request({
@@ -40,25 +35,33 @@ if request then
             Method = "PATCH",
             Headers = headers
         })
+        
         if editResponse and editResponse.StatusCode == 200 then
             print("✅ Execution webhook updated! Total:", _G.ExecutionCount)
         else
-            print("❌ Failed to update execution webhook! Status Code:", editResponse and editResponse.StatusCode or "Unknown")
+            print("❌ Failed to update execution webhook! Status:", editResponse and editResponse.StatusCode or "Unknown")
         end
     else
-        -- Jika belum ada message ID, kirim webhook baru
+        -- Kirim pesan pertama kali dan simpan ID
         local sendResponse = request({
             Url = url,
             Body = newdata,
             Method = "POST",
             Headers = headers
         })
-        if sendResponse and sendResponse.StatusCode == 200 then
-            print("✅ Execution webhook sent! Total:", _G.ExecutionCount)
+        
+        if sendResponse and sendResponse.Body then
+            local responseData = game:GetService("HttpService"):JSONDecode(sendResponse.Body)
+            if responseData and responseData.id then
+                _G.ExecutionMessageID = responseData.id -- Simpan message ID untuk update berikutnya
+                print("✅ Execution webhook sent! Message ID:", _G.ExecutionMessageID)
+            end
         else
-            print("❌ Failed to send execution webhook! Status Code:", sendResponse and sendResponse.StatusCode or "Unknown")
+            print("❌ Failed to send execution webhook!")
         end
     end
+else
+    warn("❌ HTTP Request method not found! Webhook failed to send.")
 end
 
 local id = game.PlaceId
