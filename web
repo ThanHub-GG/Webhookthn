@@ -41,7 +41,7 @@ local function updateExecutionCount()
         ["avatar_url"] = "https://media.discordapp.net/attachments/1342846567094161488/1346724283753304084/Gambar_WhatsApp_2025-02-18_pukul_06.35.37_182c3226.jpg?ex=67c93a3a&is=67c7e8ba&hm=a345e419c89c574e0f32f5ec36919cb1800eae29aa213afa5d64524a1a37287f&=&format=webp",
         ["embeds"] = {
             {
-                ["title"] = "Script Execution Tracker",
+                ["title"] = "Script Execution || THANHUB",
                 ["description"] = "**Total Executions:** `" .. tostring(newCount) .. "`",
                 ["color"] = tonumber(0x00FF00), -- Warna hijau
                 ["footer"] = { ["text"] = "Execution Webhook | Made by ThanHub" },
